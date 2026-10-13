@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sabo — Manifesto</title>
+<meta name="description" content="Sabo is the open-source brain for your AI, pointed at outcomes. Bring your own brain. Bring your own harness. Keep your own data.">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #1a1a1a;
+    --raised: #222;
+    --text: #e8e8e8;
+    --muted: #888;
+    --faint: #555;
+    --accent: #2894FF;
+    --accent-hover: #1a7ae0;
+    --border: #333;
+    --border-light: #444;
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+    --content-max: 1080px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ambient glow */
+  .glow {
+    position: fixed;
+    top: -40vh; left: 50%;
+    transform: translateX(-50%);
+    width: 90vmax; height: 90vmax;
+    background: radial-gradient(closest-side, rgba(40,148,255,0.07), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  main { position: relative; z-index: 1; }
+
+  .wrap { max-width: var(--content-max); margin: 0 auto; padding: 0 32px; }
+
+  /* ── top bar ─────────────────────────────── */
+  header {
+    position: sticky; top: 0;
+    background: rgba(13,13,13,0.82);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .lockup { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .lockup svg { display: block; }
+  .lockup .wordmark { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+  nav { display: flex; gap: 28px; }
+  nav a {
+    color: var(--muted); text-decoration: none; font-size: 0.85rem;
+    transition: color 150ms var(--ease, cubic-bezier(0.16,1,0.3,1));
+  }
+  nav a:hover { color: var(--text); }
+  .tag { border: 1px solid var(--border-light); border-radius: 999px; padding: 4px 12px; font-size: 0.72rem; font-family: var(--font-mono); color: var(--muted); letter-spacing: 0.02em; }
+
+  /* ── hero ────────────────────────────────── */
+  .hero { padding: 120px 0 80px; }
+  .kicker {
+    font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    margin-bottom: 32px;
+    max-width: 20ch;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p.lede {
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    color: var(--muted);
+    max-width: 52ch;
+    margin-bottom: 40px;
+  }
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 13px 26px; border-radius: 8px;
+    font-size: 0.9rem; font-weight: 600; text-decoration: none;
+    transition: background 150ms, border-color 150ms, transform 150ms;
+    font-family: var(--font-sans);
+  }
+  .btn-primary { background: var(--accent); color: #0d0d0d; }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .btn-ghost { border: 1px solid var(--border-light); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── section scaffolding ─────────────────── */
+  section { padding: 80px 0; border-top: 1px solid var(--border); }
+  .sec-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 20px; }
+  section h2 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); letter-spacing: -0.025em; font-weight: 650; margin-bottom: 20px; max-width: 26ch; }
+  section .body { max-width: 64ch; color: var(--muted); font-size: 1.02rem; }
+  section .body p { margin-bottom: 18px; }
+  section .body strong { color: var(--text); font-weight: 600; }
+
+  /* ── the split ───────────────────────────── */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px;
+  }
+  .card h3 { font-size: 1.1rem; margin-bottom: 10px; }
+  .card p { font-size: 0.92rem; color: var(--muted); margin-bottom: 0; }
+  .card .rule { font-family: var(--font-mono); font-size: 0.75rem; color: var(--faint); margin-top: 14px; letter-spacing: 0.02em; }
+
+  /* ── manifesto list ──────────────────────── */
+  .manifesto { margin-top: 16px; }
+  .item {
+    display: grid; grid-template-columns: 48px 1fr;
+    gap: 20px; padding: 26px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .item:last-child { border-bottom: none; }
+  .item .num {
+    font-family: var(--font-mono); font-size: 1rem; color: var(--accent);
+    padding-top: 3px;
+  }
+  .item h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .item p { color: var(--muted); font-size: 0.95rem; max-width: 62ch; }
+
+  /* ── promise ─────────────────────────────── */
+  .promise { text-align: left; }
+  .promise .big {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    letter-spacing: -0.02em; font-weight: 650;
+    max-width: 22ch; margin-bottom: 24px;
+  }
+  .promise .big em { font-style: normal; color: var(--accent); }
+  .mono-line { font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); border-left: 3px solid var(--accent); padding-left: 16px; line-height: 1.9; }
+
+  footer { padding: 56px 0 72px; border-top: 1px solid var(--border); }
+  footer .row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer .sign { font-size: 0.82rem; color: var(--faint); font-family: var(--font-mono); }
+  footer .links { display: flex; gap: 24px; }
+  footer a { color: var(--muted); text-decoration: none; font-size: 0.85rem; }
+  footer a:hover { color: var(--text); }
+
+  /* ── responsive ──────────────────────────── */
+  @media (max-width: 820px) {
+    .split { grid-template-columns: 1fr; }
+    nav { display: none; }
+    .hero { padding: 96px 0 64px; }
+    section { padding: 64px 0; }
+  }
+</style>
+</head>
+<body>
+<a href="#manifesto" style="position:absolute;left:-9999px">Skip to manifesto</a>
+
+<div class="glow" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap bar">
+    <a class="lockup" href="#">
+      <img src="sabo-mark.png" alt="Sabo" width="26" height="26" style="border-radius:6px; display:block">
+      <span class="wordmark">sabo</span>
+    </a>
+    <nav>
+      <a href="#problem">The problem</a>
+      <a href="#split">The split</a>
+      <a href="#manifesto">Manifesto</a>
+      <a href="#promise">The promise</a>
+    </nav>
+    <span class="tag">open source</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero wrap">
+    <div class="kicker">The open-source brain for your AI</div>
+    <h1>Your AI is only as good as what it knows. <em>Own the knowing.</em></h1>
+    <p class="lede">
+      Teams keep a corpus of plain markdown — the knowledge, the context, the
+      why behind every decision. Any LLM of your choice connects over MCP and
+      grounds itself on that corpus, pointed at the metrics that actually
+      matter. The brain and the harness are separate. Forever.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#manifesto">Read the manifesto</a>
+      <a class="btn btn-ghost" href="#promise">Skip to the promise</a>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section id="problem">
+    <div class="wrap">
+      <div class="sec-label">01 — The problem</div>
+      <h2>Your AI has no memory of its own. Every session starts from zero.</h2>
+      <div class="body">
+        <p>
+          The most powerful tool ever built for knowledge workers is re-learning
+          your world <strong>every single time you open it</strong>. Its memory is
+          a folder of uploaded files, a project someone remembered to attach, a
+          context window that forgets. There is no durable brain.
+        </p>
+        <p>
+          Meanwhile your real knowledge lives scattered across Salesforce,
+          Outreach, HubSpot — account states, renewal risk, pricing authority,
+          the actual reasons deals happen. Your AI can't see any of it, and when
+          it works, it works on <strong>temporary context, not durable truth</strong>.
+        </p>
+        <p>
+          So we built the missing layer. Not another chat UI. Not another lock-in.
+          A brain.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPLIT -->
+  <section id="split">
+    <div class="wrap">
+      <div class="sec-label">02 — The split</div>
+      <h2>Two things must never be merged: your knowledge and your harness.</h2>
+      <div class="body">
+        <p>
+          Your LLM is a commodity you rent by the token. Your knowledge is
+          intellectual property you own for life. Sell the first if you must —
+          <strong>never lease the second</strong>. Sabo is built on that line.
+        </p>
+      </div>
+      <div class="split">
+        <div class="card">
+          <h3>Your knowledge — the brain</h3>
+          <p>
+            Plain OKF markdown, in your control. One concept per file, the path
+            is the identity, cross-linked, human- and agent-readable. Versioned,
+            audited, encrypted where it matters. Portable to any tool, forever.
+          </p>
+          <div class="rule">portable · no lock-in · yours</div>
+        </div>
+        <div class="card">
+          <h3>Your harness — the hands</h3>
+          <p>
+            Claude, GPT, an open-weight model, a fine-tune, a custom agent — your
+            call, your key, your bill. It plugs into Sabo over an open protocol
+            and gets your brain, pointed at your outcomes.
+          </p>
+          <div class="rule">switchable · no commitment · theirs sure</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section id="manifesto">
+    <div class="wrap">
+      <div class="sec-label">03 — The manifesto</div>
+      <h2>We believe:</h2>
+      <div class="manifesto">
+
+        <div class="item">
+          <div class="num">/1</div>
+          <div>
+            <h3>The brain and the harness are separate.</h3>
+            <p>Vendor lock-in on the tool you think with is the most expensive tax in software. Your knowledge stays yours; your model stays yours.</p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="num">/2</div>
+          <div>
+            <h3>Open source is the trust story.</h3>
+            <p>Procurement can read the audit log, the encryption, the key handling — because they're all public. We don't ask you to trust us; we show you the code.</p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="num">/3</div>
+          <div>
+            <h3>Plain markdown is the only format that lasts.</h3>
+            <p>Every proprietary knowledge format is a hostage situation waiting to happen. Portable, readable, greppable — your corpus outlives every vendor.</p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="num">/4</div>
+          <div>
+            <h3>Accounts without outcomes are just files.</h3>
+            <p>Your AI isn't there to answer trivia. It's pointed at north stars — renewals, expansions, activations — and every byte in the corpus serves those.</p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="num">/5</div>
+          <div>
+            <h3>The workspace describes itself.</h3>
+            <p>No onboarding docs. Every LLM that connects explores the corpus structure itself and writes a map for the next session. No manual context handoff, ever.</p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="num">/6</div>
+          <div>
+            <h3>Agents can write — but they can never erase.</h3>
+            <p>Full version history, immutable audit trail, soft deletes. Your AI's mistakes are recoverable, reviewable, and attributable. Trust, enforced by design.</p>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="num">/7</div>
+          <div>
+            <h3>Flat infrastructure. Never tokens.</h3>
+            <p>You bring the LLM and pay your provider directly. Sabo charges for the knowledge layer — the workspace, connectors, security, audit — not for the privilege of using your own model.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE -->
+  <section id="promise">
+    <div class="wrap promise">
+      <div class="sec-label">04 — The promise</div>
+      <div class="big">The harness is the customer's. <em>The outcomes are yours.</em> Sabo is the brain.</div>
+      <div class="body">
+        <p>
+          Bring your own brain. Bring your own harness. Keep your own data.
+          Sabo sits in the middle, making the two meet — turning scattered tool
+          gravity into a durable corpus, and a durable corpus into outcomes.
+        </p>
+      </div>
+      <div class="mono-line">
+        connect any tool &gt; sync knowledge &gt; ground your AI &gt; move the metric
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap row">
+    <div class="sign">sabo — open source · self-hostable · flat-rate infrastructure</div>
+    <div class="links">
+      <a href="#">GitHub</a>
+      <a href="#">Security</a>
+      <a href="#">AGENTS.md</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
